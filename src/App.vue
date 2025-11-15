@@ -35,7 +35,7 @@
   box-sizing: border-box;
 }
 html {
-  background: #ece1cf;
+  background: #f4f5fb;
 }
 nav {
   position: fixed;
@@ -49,7 +49,7 @@ nav {
   justify-content: space-between;
   color: #888;
   z-index: 9;
-  box-shadow: 0px -2px 20px 10px #ece1cf;
+  box-shadow: 0px -2px 20px 10px #f4f5fb;
 }
 @media only screen and (min-width: 600px) {
   nav {

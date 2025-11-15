@@ -1,62 +1,110 @@
 <template>
-  <div class="leaderboard-container">
-    <div class="leaderboard">
-      <div class="logo">
-        <div class="top">&#9825;</div>
-        <div class="right">&#9825;</div>
-        <div class="bottom">&#9825;</div>
-        <div class="left">&#9825;</div>
-      </div>
-      <div class="text">
-        <span class="scotties">Scotties Pool</span>
-        <span class="leaderboard-text">Leaderboard</span>
-      </div>
-    </div>
-    <ul>
-      <li v-for="(leader, index) in leaders" :key="leader.teamName">
-        <router-link class="link" :to="'/player/' + leader.id"></router-link>
-        <div class="place" :class="getLeaderboardClass(index + 1)">
-          {{ index + 1 }}
-          <span class="ordinal">{{ getLeaderboardPlaceText(index + 1) }}</span>
-        </div>
-        <div class="avatar-name">
-          <div class="name">{{ leader.teamName }}</div>
-        </div>
+  <div class="leaderboard-page">
+    <h1>Leaderboard</h1>
 
-        <div class="total-points">
-          {{ Math.round(leader.totalPoints * 10) / 10
-          }}<span class="pts">pts</span>
-        </div>
-        <div class="chevron">›</div>
-      </li>
-    </ul>
+    <div class="leaderboard-card" v-if="leaders && leaders.length">
+      <div class="leaderboard-intro">
+        <p class="subtitle">
+          Live standings based on your picks. Points include round robin wins,
+          doubled playoff wins, and any championship bonuses.
+        </p>
+      </div>
+
+      <div class="leaderboard-header-row">
+        <span class="col-rank">Rank</span>
+        <span class="col-name">Team</span>
+        <span class="col-points">Points</span>
+      </div>
+
+      <ul class="leaderboard-list">
+        <li
+          v-for="(leader, index) in leaders"
+          :key="leader.id"
+          class="leader-row"
+        >
+          <router-link
+            class="row-link"
+            :to="'/player/' + leader.id"
+            :aria-label="'View details for ' + leader.teamName"
+          ></router-link>
+
+          <div class="rank" :class="getLeaderboardClass(index + 1)">
+            <span class="rank-number">{{ index + 1 }}</span>
+            <span class="ordinal">{{
+              getLeaderboardPlaceText(index + 1)
+            }}</span>
+          </div>
+
+          <div class="team-cell">
+            <div class="team-name">{{ leader.teamName }}</div>
+            <div class="team-meta" v-if="leader.owner">
+              Managed by {{ leader.owner }}
+            </div>
+          </div>
+
+          <div class="points-cell">
+            <span class="points-value">
+              {{ Math.round(leader.totalPoints * 10) / 10 }}
+            </span>
+            <span class="pts">pts</span>
+          </div>
+
+          <div class="chevron">›</div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="empty-state" v-else>
+      <p>
+        No entries yet. Once players have made their picks, the leaderboard will
+        appear here.
+      </p>
+    </div>
   </div>
 </template>
 
 <script>
 import { getTeamPoints } from "@/utilities/utility";
+
 export default {
   name: "Leaderboard",
   props: {
-    teams: Array,
-    users: Array,
+    teams: {
+      type: Array,
+      required: true,
+    },
+    users: {
+      type: Array,
+      required: true,
+    },
   },
   computed: {
     leaders() {
-      let leaders = [];
-      for (let i = 0; i < this.users.length; i++) {
-        let totalPoints = this.getUserPoints(this.users[i], this.teams);
-        leaders.push(this.users[i]);
-        leaders[i].totalPoints = totalPoints;
+      if (!this.users || !this.users.length) {
+        return [];
       }
-      return leaders.sort((a, b) => (a.totalPoints < b.totalPoints ? 1 : -1));
+
+      const leadersWithPoints = this.users.map((user) => {
+        const totalPoints = this.getUserPoints(user);
+        // Return a shallow copy so we are not mutating props
+        return {
+          ...user,
+          totalPoints,
+        };
+      });
+
+      return leadersWithPoints.sort((a, b) =>
+        a.totalPoints < b.totalPoints ? 1 : -1
+      );
     },
   },
   methods: {
     getUserPoints(user) {
       let userPoints = 0;
+      if (!user || !user.picks) return 0;
+
       for (let i = 0; i < user.picks.length; i++) {
-        userPoints += this.getTeamPoints(user.picks[i]);
+        userPoints += this.getTeamPoints(user.picks[i]) || 0;
       }
       return userPoints;
     },
@@ -67,225 +115,303 @@ export default {
           return getTeamPoints(team);
         }
       }
+      return 0;
     },
     getLeaderboardClass(index) {
-      if (index == 1) {
+      if (index === 1) {
         return "first shimmer";
       }
-      if (index == 2) {
+      if (index === 2) {
         return "second";
       }
-      if (index == 3) {
+      if (index === 3) {
         return "third";
       }
-      return " ";
+      return "";
     },
     getLeaderboardPlaceText(index) {
       return this.ordinal_suffix_of(index);
     },
     ordinal_suffix_of(i) {
-      var j = i % 10,
-        k = i % 100;
-      if (j == 1 && k != 11) {
-        return "st";
-      }
-      if (j == 2 && k != 12) {
-        return "nd";
-      }
-      if (j == 3 && k != 13) {
-        return "rd";
-      }
+      const j = i % 10;
+      const k = i % 100;
+      if (j === 1 && k !== 11) return "st";
+      if (j === 2 && k !== 12) return "nd";
+      if (j === 3 && k !== 13) return "rd";
       return "th";
     },
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.leaderboard-container {
-  max-width: 600px;
-  margin: auto;
-  margin-bottom: 100px;
+.leaderboard-page {
+  min-height: 100vh;
+  background: #f4f5fb;
+  padding-bottom: 80px;
 }
-@media only screen and (min-width: 700px) {
-  .leaderboard-container {
-    margin-top: 50px;
-    box-shadow: 1px 1px 3px 2px rgba(0, 0, 0, 0.3);
-  }
-}
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-.logo {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  margin-right: 20px;
-}
-.top,
-.right,
-.left,
-.bottom {
-  position: absolute;
-  font-size: 40px;
-  color: rgba(255, 255, 255, 0.533);
-}
-.top {
-  top: -17px;
-}
-.right {
-  transform: rotate(90deg);
-  top: 0px;
-  left: 17px;
-}
-.bottom {
-  top: 17px;
-  transform: rotate(180deg);
-}
-.left {
-  transform: rotate(-90deg);
-  top: 0px;
-  left: -17px;
-}
-.leaderboard {
-  background: linear-gradient(to right, #f40e04, #f40e04);
-  height: 100px;
-  display: flex;
-  align-items: center;
-  color: white;
-  justify-content: space-between;
-  font-size: 30px;
-  padding: 0 40px 0 60px;
-}
-.text {
-  display: flex;
-  flex-flow: column;
-  text-transform: uppercase;
-}
-.scotties {
-  font-size: 22.5px;
-}
-.leaderboard-text {
-  font-size: 23.8px;
-}
-.header {
-  text-transform: uppercase;
-  background: #666;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px 20px;
-}
-li {
-  display: flex;
-  border-bottom: 1px solid #ccc;
-  height: 80px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 0 0;
-  position: relative;
-  margin: 10px 0;
-  background: #f3f3f3;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-}
-.place {
-  font-size: 20px;
-  font-weight: 600;
-  flex-shrink: 0;
-  color: #333;
-  width: 70px;
-  padding: 0 20px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e6e6e6;
-}
-.place.first {
-  background: linear-gradient(180deg, #f7ab20 0%, #f7b542 100%);
-  color: white;
-}
-.place.second {
-  background: linear-gradient(0deg, rgb(197 197 197) 0%, rgb(223 223 223) 100%);
-  color: white;
-}
-.place.third {
-  background: linear-gradient(180deg, #bd6c4d 0%, #bd6c4d 100%);
-  color: white;
-}
-.ordinal {
-  font-size: 14px;
-  margin-top: 4px;
-}
-.avatar-name {
-  display: flex;
-  align-items: center;
-  color: #666;
-  font-weight: 500;
-  font-size: 16px;
-}
-.avatar {
-  width: 50px;
-  height: 50px;
-  margin-right: 20px;
-}
-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  border: 3px solid #ccc;
-  border-radius: 30px;
-}
-.name {
-  width: 170px;
-}
-.link {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-}
-.total-points {
-  font-weight: 500;
-  font-size: 20px;
-  color: rgba(0, 0, 0, 0.6);
-  color: #555;
-}
-.pts {
-  font-size: 14px;
-  color: #777;
-}
-.chevron {
-  color: white;
-  background: #f40e04aa;
-  height: 20px;
-  width: 20px;
-  border-radius: 20px;
+
+h1 {
   text-align: center;
+  padding: 30px 20px;
+  font-size: 42px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #242460, #5d5dff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  margin-bottom: 25px;
+}
+
+h1::after {
+  content: "";
+  display: block;
+  margin: 10px auto 0;
+  width: 90px;
+  height: 4px;
+  border-radius: 4px;
+  background: #5d5dff;
+  opacity: 0.7;
+}
+
+.leaderboard-card {
+  max-width: 960px;
+  margin: 30px auto 0;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  padding: 20px 20px 24px;
+}
+
+.leaderboard-intro {
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.leaderboard-header-row {
+  display: grid;
+  grid-template-columns: 1.1fr 4fr 2fr;
+  align-items: center;
+  padding: 10px 16px;
+  background: #242460;
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.col-rank {
+  text-align: left;
+}
+.col-name {
+  text-align: left;
+}
+.col-points {
+  text-align: right;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+.leader-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1fr 4fr 2fr 24px;
+  align-items: center;
+  padding: 10px 16px;
+  margin-top: 6px;
+  border-radius: 10px;
+  background: #f8f8ff;
+  box-shadow: 0 1px 4px rgba(8, 19, 60, 0.06);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.leader-row:nth-child(odd) {
+  background: #ffffff;
+}
+
+.leader-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(8, 19, 60, 0.12);
+  background: #f3f4ff;
+}
+
+.row-link {
+  position: absolute;
+  inset: 0;
+}
+
+/* Rank */
+.rank {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  line-height: 0.6;
+  width: 62px;
+  height: 52px;
+  border-radius: 12px;
+  background: #e3e5fb;
+  font-weight: 700;
+  font-size: 18px;
+  color: #242460;
 }
+
+.rank-number {
+  line-height: 1;
+}
+
+.ordinal {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+/* Medal colors */
+.rank.first {
+  background: linear-gradient(135deg, #f7b930 0%, #f4a321 100%);
+  color: #fff;
+}
+.rank.second {
+  background: linear-gradient(135deg, #cfd4dd 0%, #aeb4c2 100%);
+  color: #fff;
+}
+.rank.third {
+  background: linear-gradient(135deg, #d18b5c 0%, #b56034 100%);
+  color: #fff;
+}
+
+/* shimmer retained for first place */
 .shimmer {
   -webkit-mask: linear-gradient(-60deg, #000 30%, #0005, #000 70%) right/400%
     100%;
   background-repeat: no-repeat;
-  animation: shimmer 5s infinite;
+  animation: shimmer 4s infinite;
 }
+
 @keyframes shimmer {
   20% {
     -webkit-mask-position: left;
   }
   100% {
     -webkit-mask-position: left;
+  }
+}
+
+/* Team cell */
+.team-cell {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}
+
+.team-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.team-meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+/* Points cell */
+.points-cell {
+  text-align: right;
+}
+
+.points-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #242460;
+}
+
+.pts {
+  font-size: 12px;
+  margin-left: 4px;
+  color: #777;
+}
+
+/* Chevron */
+.chevron {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  background: #f40e04aa;
+  color: #ffffff;
+  margin-left: 6px;
+}
+
+/* Empty state */
+.empty-state {
+  max-width: 640px;
+  margin: 40px auto 0;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+  padding: 16px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 720px) {
+  .leaderboard-card {
+    margin: 18px 14px 0;
+    padding: 18px 12px 22px;
+  }
+
+  .leaderboard-header-row {
+    display: none;
+  }
+
+  .leader-row {
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    row-gap: 6px;
+    padding: 10px 12px;
+  }
+
+  .rank {
+    grid-row: span 2;
+    width: 52px;
+    height: 46px;
+    font-size: 16px;
+    display: flex;
+    flex-flow: row;
+  }
+
+  .team-cell {
+    padding: 0 8px 0 10px;
+  }
+
+  .points-cell {
+    text-align: right;
+    align-self: center;
+  }
+
+  .points-value {
+    font-size: 18px;
+  }
+
+  .chevron {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: flex-end;
   }
 }
 </style>
