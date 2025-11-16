@@ -151,7 +151,7 @@ const teams: Team[] = [
     name: "Team Epping",
     subName: "Sudbury, Ont.",
     image: "/ontario.png",
-    pointsPerWin: 20,
+    pointsPerWin: 18,
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
