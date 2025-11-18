@@ -6,8 +6,8 @@
       <div class="player-header">
         <div class="player-name-block">
           <h2 class="player-title">{{ currentUser.teamName }}</h2>
-          <p v-if="currentUser.owner" class="player-meta">
-            Managed by <strong>{{ currentUser.owner }}</strong>
+          <p v-if="currentUser.realName" class="player-meta">
+            Managed by <strong>{{ currentUser.realName }}</strong>
           </p>
         </div>
 
@@ -40,7 +40,7 @@
       <ul class="picks-list">
         <li
           v-for="pick in pickDetails"
-          :key="pick.teamId"
+          :key="pick.teamName"
           class="pick-row"
         >
           <div class="team-logo">
@@ -95,87 +95,102 @@
     </div>
 
     <div v-else class="empty-state">
-      <p>We could not find this player. Try going back to the leaderboard and selecting a player again.</p>
+      <p>
+        We could not find this player. Try going back to the leaderboard and
+        selecting a player again.
+      </p>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { getTeamPoints } from "@/utilities/utility";
+import { type Team, type User, TeamName } from "@/router/index"; // adjust path if needed
+
+interface PickDetail {
+  teamName: TeamName;
+  team: Team | null;
+  totalPoints: number;
+}
 
 export default {
   name: "PlayerDetail",
   props: {
     teams: {
-      type: Array,
+      type: Array as () => Team[],
       required: true,
     },
     users: {
-      type: Array,
+      type: Array as () => User[],
       required: true,
     },
   },
   computed: {
-    currentUser() {
+    currentUser(): User | null {
       if (!this.users || !this.users.length) return null;
 
-      const id = Number(this.$route.params.id);
+      const idParam = this.$route.params.id as string | undefined;
+      const id = Number(idParam);
+
       // Prefer matching by id if available, fall back to index-based
-      const foundById = this.users.find((u) => u.id == id);
+      const foundById = this.users.find((u: User) => u.id == id);
       if (foundById) return foundById;
 
       if (!isNaN(id) && id > 0 && id <= this.users.length) {
-        return this.users[id - 1];
+        return this.users[id - 1] ?? null;
       }
 
-      return this.users[0];
+      return this.users[0] || null;
     },
-    pickDetails() {
+    pickDetails(): PickDetail[] {
       if (!this.currentUser || !this.currentUser.picks) return [];
 
-      return this.currentUser.picks.map((teamId) => {
-        const team = this.getTeamFromId(teamId);
-        const totalPoints = this.getTeamPoints(teamId) || 0;
+      return this.currentUser.picks.map((teamName: TeamName) => {
+        const team = this.getTeamFromName(teamName);
+        const totalPoints = this.getTeamPointsForTeam(teamName) || 0;
         return {
-          teamId,
+          teamName,
           team,
           totalPoints,
         };
       });
     },
-    totalPoints() {
+    totalPoints(): number {
       return this.pickDetails.reduce(
         (sum, p) => sum + (p.totalPoints || 0),
         0
       );
     },
-    totalPointsRounded() {
+    totalPointsRounded(): number {
       return Math.round(this.totalPoints * 10) / 10;
     },
   },
   methods: {
-    getTeamFromId(teamId) {
+    getTeamFromName(teamName: TeamName): Team | null {
       if (!this.teams) return null;
       for (let i = 0; i < this.teams.length; i++) {
-        if (this.teams[i].id == teamId) {
-          return this.teams[i];
+        const team = this.teams[i];
+        if (!team) continue;
+        if (team.teamName === teamName) {
+          return team;
         }
       }
       return null;
     },
-    getTotalPoints(user) {
+    getTotalPoints(user: User): number {
       if (!user || !user.picks) return 0;
       let userPoints = 0;
       for (let i = 0; i < user.picks.length; i++) {
-        userPoints += this.getTeamPoints(user.picks[i]) || 0;
+        userPoints += this.getTeamPointsForTeam(user.picks[i]) || 0;
       }
       return userPoints;
     },
-    getTeamPoints(teamId) {
+    getTeamPointsForTeam(teamName?: TeamName): number {
       if (!this.teams) return 0;
       for (let i = 0; i < this.teams.length; i++) {
-        if (this.teams[i].id == teamId) {
-          const team = this.teams[i];
+        const team = this.teams[i];
+        if (!team) continue;
+        if (team.teamName === teamName) {
           // Use shared utility so scoring matches the leaderboard
           return getTeamPoints(team);
         }
@@ -185,6 +200,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .player-page {

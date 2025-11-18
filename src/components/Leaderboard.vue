@@ -288,6 +288,7 @@ h1::after {
   font-weight: 700;
   font-size: 18px;
   color: #242460;
+  flex-flow: row;
 }
 
 .rank-number {
