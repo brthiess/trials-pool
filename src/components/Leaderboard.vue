@@ -381,6 +381,8 @@ h1::after {
   background: #f40e04aa;
   color: #ffffff;
   margin-left: 6px;
+  padding-bottom: 3px;
+  padding-left: 1px;
 }
 
 /* Empty state */
