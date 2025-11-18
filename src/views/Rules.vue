@@ -53,7 +53,7 @@
 
         <div
           v-for="team in teams"
-          :key="team.id"
+          :key="team.teamName"
           class="row body-row"
         >
           <p class="team-cell">

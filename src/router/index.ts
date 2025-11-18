@@ -16,8 +16,8 @@ export interface Team {
   wins: number;
   playoffWins: number;
   isTournamentChampion: boolean;
-  id: number;
   gender: Gender;
+  teamName: TeamName;
 }
 
 export enum Gender {
@@ -25,10 +25,29 @@ export enum Gender {
   Female = "Female",
 }
 
+export enum TeamName {
+  TeamHoman = "Team Homan",
+  TeamEinarson = "Team Einarson",
+  TeamLawes = "Team Lawes",
+  TeamCameron = "Team Cameron",
+  TeamBlack = "Team Black",
+  TeamBrown = "Team Brown",
+  TeamSturmay = "Team Sturmay",
+  TeamSkrlik = "Team Skrlik",
+  TeamDunstone = "Team Dunstone",
+  TeamJacobs = "Team Jacobs",
+  TeamEpping = "Team Epping",
+  TeamGushue = "Team Gushue",
+  TeamMcEwen = "Team McEwen",
+  TeamMcDonald = "Team McDonald",
+  TeamKoe = "Team Koe",
+  TeamKleiter = "Team Kleiter",
+}
+
 export interface User {
   teamName: string;
   realName: string;
-  picks: number[];
+  picks: Array<TeamName>;
   img: string;
   id: number;
 }
@@ -42,8 +61,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 1,
     gender: Gender.Female,
+    teamName: TeamName.TeamHoman,
   },
   
 
@@ -55,8 +74,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 5,
     gender: Gender.Female,
+    teamName: TeamName.TeamEinarson,
   },
   {
     name: "Team Lawes",
@@ -66,8 +85,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 6,
     gender: Gender.Female,
+    teamName: TeamName.TeamLawes,
   },
     {
     name: "Team Cameron",
@@ -77,8 +96,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 4,
     gender: Gender.Female,
+    teamName: TeamName.TeamCameron,
   },
   {
     name: "Team Black",
@@ -88,8 +107,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 2,
     gender: Gender.Female,
+    teamName: TeamName.TeamBlack,
   },
   {
     name: "Team Brown",
@@ -99,8 +118,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 3,
     gender: Gender.Female,
+    teamName: TeamName.TeamBrown,
   },
 
   {
@@ -111,8 +130,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 8,
     gender: Gender.Female,
+    teamName: TeamName.TeamSturmay,
   },
     {
     name: "Team Skrlik",
@@ -122,8 +141,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 7,
     gender: Gender.Female,
+    teamName: TeamName.TeamSkrlik,
   },
   {
     name: "Team Dunstone",
@@ -133,8 +152,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 9,
     gender: Gender.Male,
+    teamName: TeamName.TeamDunstone,
   },
   {
     name: "Team Jacobs",
@@ -144,8 +163,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 12,
     gender: Gender.Male,
+    teamName: TeamName.TeamJacobs,
   },
   {
     name: "Team Epping",
@@ -155,8 +174,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 10,
     gender: Gender.Male,
+    teamName: TeamName.TeamEpping,
   },
   {
     name: "Team Gushue",
@@ -166,8 +185,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 11,
     gender: Gender.Male,
+    teamName: TeamName.TeamGushue,
   },
 
   {
@@ -178,8 +197,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 16,
     gender: Gender.Male,
+    teamName: TeamName.TeamMcEwen,
   },
   {
     name: "Team McDonald",
@@ -189,8 +208,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 15,
     gender: Gender.Male,
+    teamName: TeamName.TeamMcDonald,
   },
   {
     name: "Team Koe",
@@ -200,8 +219,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 14,
     gender: Gender.Male,
+    teamName: TeamName.TeamKoe,
   },
 
   {
@@ -212,8 +231,8 @@ const teams: Team[] = [
     wins: 0,
     playoffWins: 0,
     isTournamentChampion: false,
-    id: 13,
     gender: Gender.Male,
+    teamName: TeamName.TeamKleiter,
   },
 ];
 
@@ -222,9 +241,37 @@ const users: User[] = [
     id: 1,
     teamName: "Hazel's Picks",
     realName: "Hazel",
-    picks: [6, 11, 15, 8, 1, 14],
+    picks: [TeamName.TeamHoman, TeamName.TeamKoe, TeamName.TeamGushue, TeamName.TeamEinarson, TeamName.TeamJacobs, TeamName.TeamSturmay],
     img: "rock.png",
   },
+  {
+    id: 2,
+    teamName: "Broom for Improvement",
+    realName: "Alison",
+    picks: [TeamName.TeamHoman, TeamName.TeamEpping, TeamName.TeamJacobs, TeamName.TeamBlack, TeamName.TeamSturmay, TeamName.TeamBrown],
+    img: "broom.png",
+  },
+  {
+    id: 3,
+    teamName: "Lawes & no order ",
+    realName: "Nevin",
+    picks: [TeamName.TeamEinarson, TeamName.TeamCameron, TeamName.TeamLawes, TeamName.TeamGushue, TeamName.TeamMcEwen, TeamName.TeamKoe],
+    img: "third.png",
+  },
+  {
+    id: 4,
+    teamName: "NOORDZEE",
+    realName: "Emile",
+    picks: [TeamName.TeamHoman, TeamName.TeamSkrlik, TeamName.TeamSturmay, TeamName.TeamDunstone, TeamName.TeamGushue, TeamName.TeamMcEwen],
+    img: "noordzee.png",
+  },
+  {
+    id: 5,
+    teamName: "Rock On",
+    realName: "Dennis",
+    picks: [TeamName.TeamDunstone, TeamName.TeamJacobs, TeamName.TeamEpping, TeamName.TeamEinarson, TeamName.TeamLawes, TeamName.TeamBlack],
+    img: "rockon.png",
+  }
 ];
 
 const routes: RouteRecordRaw[] = [

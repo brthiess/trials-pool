@@ -12,7 +12,7 @@
       <ul class="team-list">
         <li
           v-for="team in mostPopularTeams"
-          :key="team.id"
+          :key="team.teamName"
           class="team-row"
         >
           <div class="team-main">
@@ -62,7 +62,7 @@
       <ul class="team-list">
         <li
           v-for="team in bestTeams"
-          :key="team.id"
+          :key="team.teamName"
           class="team-row"
         >
           <div class="team-main">
@@ -106,15 +106,31 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { getTeamPoints } from "@/utilities/utility";
-import { Gender } from "@/router/index"; // adjust path if needed
+import { Gender, TeamName, type Team, type User } from "@/router/index"; // adjust path if needed
+
+// Extra types for computed values
+interface TeamWithPopularity extends Team {
+  totalPicks: number;
+  percentageOfTotalPicks: number;
+}
+
+interface TeamWithPoints extends Team {
+  totalPoints: number;
+}
 
 export default {
   name: "Stats",
   props: {
-    teams: Array,
-    users: Array,
+    teams: {
+      type: Array as () => Team[],
+      required: true,
+    },
+    users: {
+      type: Array as () => User[],
+      required: true,
+    },
   },
   data() {
     return {
@@ -122,52 +138,66 @@ export default {
     };
   },
   methods: {
-    getTeamFromId(teamId) {
+    getTeamFromId(teamName: TeamName): Team | null {
+      if (!this.teams) return null;
       for (let i = 0; i < this.teams.length; i++) {
-        if (this.teams[i].id == teamId) {
-          return this.teams[i];
+        const team = this.teams[i];
+        if (team && team.teamName === teamName) {
+          return team;
         }
       }
+      return null;
     },
   },
   computed: {
-    mostPopularTeams() {
-      let popularTeams = [];
-      let popularPicks = {};
+    mostPopularTeams(): TeamWithPopularity[] {
+      if (!this.users || !this.teams) return [];
+
+      const popularPicks: Record<TeamName, number> = {} as Record<TeamName, number>;
       let totalPicks = 0;
 
+      // Count how many times each team is picked
       for (let i = 0; i < this.users.length; i++) {
-        for (let j = 0; j < this.users[i].picks.length; j++) {
-          const pick = this.users[i].picks[j];
-          if (!popularPicks[pick]) {
-            popularPicks[pick] = 0;
-          }
-          popularPicks[pick] += 1;
+        const user = this.users[i];
+        if (!user) continue;
+        for (let j = 0; j < user.picks.length; j++) {
+          const pick = user.picks[j]; // pick is a TeamName
+          if (!pick) continue;
+          popularPicks[pick] = (popularPicks[pick] || 0) + 1;
           totalPicks += 1;
         }
       }
 
-      for (const teamId in popularPicks) {
-        let team = this.getTeamFromId(teamId);
-        if (!team) continue;
-        team.totalPicks = popularPicks[teamId];
-        // Keeping your original formula here
-        team.percentageOfTotalPicks = (team.totalPicks / totalPicks) * 6 * 100;
-        popularTeams.push(team);
+      const popularTeams: TeamWithPopularity[] = [];
+
+      // Build the resulting list, using teamName instead of id
+      for (const key in popularPicks) {
+        const teamName = key as TeamName;
+        const baseTeam = this.getTeamFromId(teamName);
+        if (!baseTeam) continue;
+
+        const totalPicksForTeam = popularPicks[teamName];
+
+        popularTeams.push({
+          ...baseTeam,
+          totalPicks: totalPicksForTeam,
+          // Keeping your original formula here
+          percentageOfTotalPicks: (totalPicksForTeam / totalPicks) * 6 * 100,
+        });
       }
 
       return popularTeams.sort((a, b) =>
         a.percentageOfTotalPicks < b.percentageOfTotalPicks ? 1 : -1
       );
     },
-    bestTeams() {
-      let bestTeams = [];
 
-      for (let i = 0; i < this.teams.length; i++) {
-        const team = this.teams[i];
-        bestTeams.push(team);
-        team.totalPoints = getTeamPoints(team);
-      }
+    bestTeams(): TeamWithPoints[] {
+      if (!this.teams) return [];
+
+      const bestTeams: TeamWithPoints[] = this.teams.map((team) => ({
+        ...team,
+        totalPoints: getTeamPoints(team),
+      }));
 
       return bestTeams.sort((a, b) =>
         a.totalPoints < b.totalPoints ? 1 : -1
@@ -176,6 +206,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .about {

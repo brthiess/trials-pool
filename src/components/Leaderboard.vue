@@ -30,15 +30,15 @@
 
           <div class="rank" :class="getLeaderboardClass(index + 1)">
             <span class="rank-number">{{ index + 1 }}</span>
-            <span class="ordinal">{{
-              getLeaderboardPlaceText(index + 1)
-            }}</span>
+            <span class="ordinal">
+              {{ getLeaderboardPlaceText(index + 1) }}
+            </span>
           </div>
 
           <div class="team-cell">
             <div class="team-name">{{ leader.teamName }}</div>
-            <div class="team-meta" v-if="leader.owner">
-              Managed by {{ leader.owner }}
+            <div class="team-meta" v-if="leader.realName">
+              Managed by {{ leader.realName }}
             </div>
           </div>
 
@@ -63,35 +63,42 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { getTeamPoints } from "@/utilities/utility";
+import { TeamName, type Team, type User } from "@/router/index"; // adjust path if needed
+
+interface LeaderWithPoints extends User {
+  totalPoints: number;
+}
 
 export default {
   name: "Leaderboard",
   props: {
     teams: {
-      type: Array,
+      type: Array as () => Team[],
       required: true,
     },
     users: {
-      type: Array,
+      type: Array as () => User[],
       required: true,
     },
   },
   computed: {
-    leaders() {
+    leaders(): LeaderWithPoints[] {
       if (!this.users || !this.users.length) {
         return [];
       }
 
-      const leadersWithPoints = this.users.map((user) => {
-        const totalPoints = this.getUserPoints(user);
-        // Return a shallow copy so we are not mutating props
-        return {
-          ...user,
-          totalPoints,
-        };
-      });
+      const leadersWithPoints: LeaderWithPoints[] = this.users.map(
+        (user: User) => {
+          const totalPoints = this.getUserPoints(user);
+          // Return a shallow copy so we are not mutating props
+          return {
+            ...user,
+            totalPoints,
+          };
+        }
+      );
 
       return leadersWithPoints.sort((a, b) =>
         a.totalPoints < b.totalPoints ? 1 : -1
@@ -99,25 +106,39 @@ export default {
     },
   },
   methods: {
-    getUserPoints(user) {
+    getUserPoints(user: User): number {
+      if (!user || !user.picks || !user.picks.length) {
+        return 0;
+      }
+
       let userPoints = 0;
-      if (!user || !user.picks) return 0;
 
       for (let i = 0; i < user.picks.length; i++) {
-        userPoints += this.getTeamPoints(user.picks[i]) || 0;
+        const teamName = user.picks[i]; // TeamName
+        if (!teamName) continue;
+        userPoints += this.getTeamPointsByName(teamName) || 0;
       }
+
       return userPoints;
     },
-    getTeamPoints(teamId) {
+
+    getTeamPointsByName(teamName: TeamName): number {
+      if (!this.teams || !this.teams.length) {
+        return 0;
+      }
+
       for (let i = 0; i < this.teams.length; i++) {
-        if (this.teams[i].id == teamId) {
-          const team = this.teams[i];
+        const team = this.teams[i];
+        if (!team) continue;
+        if (team.teamName === teamName) {
           return getTeamPoints(team);
         }
       }
+
       return 0;
     },
-    getLeaderboardClass(index) {
+
+    getLeaderboardClass(index: number): string {
       if (index === 1) {
         return "first shimmer";
       }
@@ -129,10 +150,12 @@ export default {
       }
       return "";
     },
-    getLeaderboardPlaceText(index) {
+
+    getLeaderboardPlaceText(index: number): string {
       return this.ordinal_suffix_of(index);
     },
-    ordinal_suffix_of(i) {
+
+    ordinal_suffix_of(i: number): string {
       const j = i % 10;
       const k = i % 100;
       if (j === 1 && k !== 11) return "st";
@@ -143,6 +166,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .leaderboard-page {
