@@ -271,7 +271,13 @@ const users: User[] = [
     realName: "Dennis",
     picks: [TeamName.TeamDunstone, TeamName.TeamJacobs, TeamName.TeamEpping, TeamName.TeamEinarson, TeamName.TeamLawes, TeamName.TeamBlack],
     img: "rockon.png",
-  }
+  },
+  {
+    id: 6,
+    teamName: "Broom with a View",
+    realName: "Lori",
+    picks: [TeamName.TeamEinarson, TeamName.TeamLawes, TeamName.TeamCameron, TeamName.TeamKoe, TeamName.TeamDunstone, TeamName.TeamMcDonald],
+    img: "broomview.png",}
 ];
 
 const routes: RouteRecordRaw[] = [
