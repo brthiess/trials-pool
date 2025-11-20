@@ -277,7 +277,22 @@ const users: User[] = [
     teamName: "Broom with a View",
     realName: "Lori",
     picks: [TeamName.TeamEinarson, TeamName.TeamLawes, TeamName.TeamCameron, TeamName.TeamKoe, TeamName.TeamDunstone, TeamName.TeamMcDonald],
-    img: "broomview.png",}
+    img: "broomview.png",
+  },
+  {
+    id: 7,
+    teamName: "Button Buster",
+    realName: "Jason",
+    picks: [TeamName.TeamEinarson, TeamName.TeamCameron, TeamName.TeamLawes, TeamName.TeamEpping, TeamName.TeamMcEwen, TeamName.TeamJacobs],
+    img: "buttonbuster.png",
+  },
+  {
+    id: 8,
+    teamName: "Zoey and the Tiny2",
+    realName: "Zoey",
+    picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamBlack, TeamName.TeamDunstone, TeamName.TeamEpping, TeamName.TeamMcEwen],
+    img: "zoey.png",
+  },
 ];
 
 const routes: RouteRecordRaw[] = [
