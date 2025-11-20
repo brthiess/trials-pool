@@ -37,9 +37,6 @@
 
           <div class="team-cell">
             <div class="team-name">{{ leader.teamName }}</div>
-            <div class="team-meta" v-if="leader.realName">
-              Managed by {{ leader.realName }}
-            </div>
           </div>
 
           <div class="points-cell">
