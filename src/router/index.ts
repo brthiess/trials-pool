@@ -353,7 +353,7 @@ const users: User[] = [
     id: 17,
     teamName: "Marie",
     realName: "Marie",
-    picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamCameron, TeamName.TeamDunstone, TeamName.TeamGushue, TeamName.TeamMcdonald],
+    picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamCameron, TeamName.TeamDunstone, TeamName.TeamGushue, TeamName.TeamMcDonald],
     img:"",
   },
 ];
@@ -392,6 +392,7 @@ const router = createRouter({
 
 export default router;
 export { teams, users };
+
 
 
 
