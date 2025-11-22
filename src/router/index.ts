@@ -293,6 +293,62 @@ const users: User[] = [
     picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamBlack, TeamName.TeamDunstone, TeamName.TeamEpping, TeamName.TeamMcEwen],
     img: "zoey.png",
   },
+  {
+    id: 9,
+    teamName: "Jetstones",
+    realName: "Nic",
+    picks: [TeamName.TeamHoman, TeamName.TeamCameron, TeamName.TeamBrown, TeamName.TeamDunstone, TeamName.TeamJacobs, TeamName.TeamGushue],
+    img:"",
+  },
+  {
+    id: 10,
+    teamName: "Team Rock'n Roll",
+    realName: "Louise",
+    picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamSturmay, TeamName.TeamEpping, TeamName.TeamJacobs, TeamName.TeamMcewen],
+    img:"",
+  },
+  {
+    id: 11,
+    teamName: "Jimmy Jazz",
+    realName: "Kevin",
+    picks: [TeamName.TeamLawes, TeamName.TeamCameron, TeamName.TeamEinarson, TeamName.TeamJacobs, TeamName.TeamEpping, TeamName.TeamGushue],
+    img:"",
+  },
+  {
+    id: 12,
+    teamName: "Chinese Takeout",
+    realName: "Bernie & Linda",
+    picks: [TeamName.TeamHoman, TeamName.TeamSturmay, TeamName.TeamBlack, TeamName.TeamDunstone, TeamName.TeamMcewen, TeamName.TeamGushue],
+    img:"",
+  },
+  {
+    id: 13,
+    teamName: "Curl Power",
+    realName: "Bernie",
+    picks: [TeamName.TeamHoman, TeamName.TeamSturmay, TeamName.TeamBrown, TeamName.TeamDunstone, TeamName.TeamJacobs, TeamName.TeamGushue],
+    img:"",
+  },
+  {
+    id: 14,
+    teamName: "Jetstones",
+    realName: "Matt",
+    picks: [TeamName.TeamHoman, TeamName.TeamCameron, TeamName.TeamSkrlik, TeamName.TeamKoe, TeamName.TeamJacobs, TeamName.TeamGushue],
+    img:"",
+  },
+  {
+    id: 15,
+    teamName: "Get Your Sheet Together",
+    realName: "Julie",
+    picks: [TeamName.TeamHoman, TeamName.TeamGushue, TeamName.TeamJacobs, TeamName.TeamEinarson, TeamName.TeamMcewen, TeamName.TeamKoe],
+    img:"",
+  },
+  {
+    id: 16,
+    teamName: "Sheet Happens",
+    realName: "Jarred",
+    picks: [TeamName.TeamDunstone, TeamName.TeamKoe, TeamName.TeamBlack, TeamName.TeamSturmay, TeamName.TeamMcewen, TeamName.TeamEinarson],
+    img:"",
+  },
 ];
 
 const routes: RouteRecordRaw[] = [
@@ -329,3 +385,4 @@ const router = createRouter({
 
 export default router;
 export { teams, users };
+
