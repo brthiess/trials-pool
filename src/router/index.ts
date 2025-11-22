@@ -349,6 +349,13 @@ const users: User[] = [
     picks: [TeamName.TeamDunstone, TeamName.TeamKoe, TeamName.TeamBlack, TeamName.TeamSturmay, TeamName.TeamMcEwen, TeamName.TeamEinarson],
     img:"",
   },
+  {
+    id: 17,
+    teamName: "Marie",
+    realName: "Marie",
+    picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamCameron, TeamName.TeamDunstone, TeamName.TeamGushue, TeamName.TeamMcdonald],
+    img:"",
+  },
 ];
 
 const routes: RouteRecordRaw[] = [
@@ -385,6 +392,7 @@ const router = createRouter({
 
 export default router;
 export { teams, users };
+
 
 
 
