@@ -304,7 +304,7 @@ const users: User[] = [
     id: 10,
     teamName: "Team Rock'n Roll",
     realName: "Louise",
-    picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamSturmay, TeamName.TeamEpping, TeamName.TeamJacobs, TeamName.TeamMcewen],
+    picks: [TeamName.TeamHoman, TeamName.TeamEinarson, TeamName.TeamSturmay, TeamName.TeamEpping, TeamName.TeamJacobs, TeamName.TeamMcEwen],
     img:"",
   },
   {
@@ -318,7 +318,7 @@ const users: User[] = [
     id: 12,
     teamName: "Chinese Takeout",
     realName: "Bernie & Linda",
-    picks: [TeamName.TeamHoman, TeamName.TeamSturmay, TeamName.TeamBlack, TeamName.TeamDunstone, TeamName.TeamMcewen, TeamName.TeamGushue],
+    picks: [TeamName.TeamHoman, TeamName.TeamSturmay, TeamName.TeamBlack, TeamName.TeamDunstone, TeamName.TeamMcEwen, TeamName.TeamGushue],
     img:"",
   },
   {
@@ -339,14 +339,14 @@ const users: User[] = [
     id: 15,
     teamName: "Get Your Sheet Together",
     realName: "Julie",
-    picks: [TeamName.TeamHoman, TeamName.TeamGushue, TeamName.TeamJacobs, TeamName.TeamEinarson, TeamName.TeamMcewen, TeamName.TeamKoe],
+    picks: [TeamName.TeamHoman, TeamName.TeamGushue, TeamName.TeamJacobs, TeamName.TeamEinarson, TeamName.TeamMcEwen, TeamName.TeamKoe],
     img:"",
   },
   {
     id: 16,
     teamName: "Sheet Happens",
     realName: "Jarred",
-    picks: [TeamName.TeamDunstone, TeamName.TeamKoe, TeamName.TeamBlack, TeamName.TeamSturmay, TeamName.TeamMcewen, TeamName.TeamEinarson],
+    picks: [TeamName.TeamDunstone, TeamName.TeamKoe, TeamName.TeamBlack, TeamName.TeamSturmay, TeamName.TeamMcEwen, TeamName.TeamEinarson],
     img:"",
   },
 ];
@@ -385,4 +385,5 @@ const router = createRouter({
 
 export default router;
 export { teams, users };
+
 
