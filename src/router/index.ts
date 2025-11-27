@@ -105,7 +105,7 @@ const teams: Team[] = [
     image: "/nova-scotia.png",
     pointsPerWin: 35,
     wins: 4,
-    playoffWins: 0,
+    playoffWins: 1,
     isTournamentChampion: false,
     gender: Gender.Female,
     teamName: TeamName.TeamBlack,
