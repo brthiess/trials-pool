@@ -59,7 +59,7 @@ const teams: Team[] = [
     image: "/ontario.png",
     pointsPerWin: 7,
     wins: 6,
-    playoffWins: 0,
+    playoffWins: 1,
     isTournamentChampion: false,
     gender: Gender.Female,
     teamName: TeamName.TeamHoman,
