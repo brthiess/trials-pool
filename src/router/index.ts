@@ -150,7 +150,7 @@ const teams: Team[] = [
     image: "/manitoba.png",
     pointsPerWin: 10,
     wins: 4,
-    playoffWins: 0,
+    playoffWins: 1,
     isTournamentChampion: false,
     gender: Gender.Male,
     teamName: TeamName.TeamDunstone,
